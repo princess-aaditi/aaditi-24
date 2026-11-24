@@ -2016,36 +2016,4 @@ input[type=range]{width:100%;accent-color:var(--gold);height:40px}
 })();
 </script>
 
-
-<!-- background music: one song per chapter, starts on her first tap -->
-<style>
-#mus{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));z-index:50;
-width:46px;height:46px;border-radius:50%;border:1px solid #d8b46a;background:rgba(28,16,35,.85);color:#f1dba6;
-font:600 20px/1 Georgia,serif;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 4px 14px #07030a}
-#mus.off{opacity:.55;text-decoration:line-through}
-</style>
-<button id="mus" type="button" aria-label="Music on or off">&#9835;</button>
-<audio id="aud" preload="auto" playsinline></audio>
-<script>
-(function(){
-  var LIST = { '1':['music/ch1.mp3'], '2':['music/ch2.mp3'], '3':['music/ch3.mp3'], '4':['music/ch4a.mp3','music/ch4b.mp3'] };
-  var a = document.getElementById('aud'), btn = document.getElementById('mus');
-  var on = true, ch = null, idx = 0, started = false;
-  a.volume = 0.6;
-  function want(){ return document.documentElement.getAttribute('data-ch') || '1'; }
-  function load(c){ ch = c; idx = 0; a.src = LIST[c][0]; if (on && started) a.play().catch(function(){}); }
-  a.addEventListener('ended', function(){ var l = LIST[ch]; idx = (idx + 1) % l.length; a.src = l[idx]; if (on) a.play().catch(function(){}); });
-  new MutationObserver(function(){ var c = want(); if (c !== ch && LIST[c]) load(c); })
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-ch'] });
-  load(want());
-  function kick(){ if (started) return; started = true; if (on) a.play().catch(function(){ started = false; }); }
-  ['pointerdown','touchend','keydown','click'].forEach(function(t){ document.addEventListener(t, kick, true); });
-  btn.addEventListener('click', function(e){
-    e.stopPropagation();
-    on = !on; btn.classList.toggle('off', !on);
-    if (on){ started = true; a.play().catch(function(){}); } else a.pause();
-  });
-  document.addEventListener('visibilitychange', function(){ if (document.hidden) a.pause(); else if (on && started) a.play().catch(function(){}); });
-})();
-</script>
 </body></html>
